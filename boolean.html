@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>rock-paper-scissors</title>
+</head>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        background-color: rgb(46, 46, 46);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 60px;
+        color: white;
+    }
+
+    .heading {
+        font-size: 25px;
+    }
+
+    .logo {
+        height: 220px;
+    }
+
+    .move {
+        margin: 20px 0 20px 0;
+    }
+
+    .move button {
+        height: 150px;
+        width: 150px;
+        border-radius: 50%;
+        overflow: hidden;
+        background-color: black;
+        border: 2px solid white;
+
+
+    }
+
+    .move button:active {
+        height: 148px;
+        width: 148px;
+        margin: 2px;
+
+    }
+
+    button img {
+        height: 80px;
+        background-color: black;
+        object-fit: cover;
+    }
+
+    .result,
+    .score {
+        font-size: 20px;
+        font-weight: bold;
+        color: rgb(253, 253, 253);
+    }
+
+    .reset-btn,
+    .autoplay {
+        height: 40px;
+        width: 100px;
+        font-size: 20px;
+        border: none;
+        color: white;
+        background-color: rgb(255, 123, 0);
+        border-radius: 15px;
+        margin-top: 40px;
+
+
+    }
+</style>
+
+<body>
+    <img class="logo" src="rockp.png" alt="">
+    <p class="heading">ROCK - PAPER - SCISSORS</p>
+    <div class="move">
+        <button onclick="
+        playGame('rock') ">
+            <img src="pngegg.png" alt="">
+        </button>
+
+        <button onclick="
+       playGame('paper') ">
+            <img src="Daco_1650091.png" alt="">
+        </button>
+
+        <button onclick="
+       playGame('scissors')">
+            <img src="scissor.png" alt="">
+        </button>
+    </div>
+
+    <p class="result"></p>
+    <p class="score"></p>
+
+    <button class="reset-btn" onclick="
+    score.wins=0;
+    score.losses=0; 
+    score.ties=0;
+    localStorage.removeItem('score');
+    updateScore()">
+        Reset
+    </button>
+
+    <button class="autoplay" onclick="autoplay();">AutoPlay</button>
+
+
+
+
+    <script>
+        let score = JSON.parse(localStorage.getItem('score'));
+        if (score === null) {
+            score = {
+                wins: 0,
+                losses: 0,
+                ties: 0
+            };
+        }
+
+        updateScore()
+
+        function pickComputerMove() {
+            const randomNumber = Math.random();
+            let computerMove = '';
+            if (randomNumber >= 0 && randomNumber < 1 / 3) {
+                computerMove = 'Rock';
+            }
+            else if (randomNumber >= 1 / 3 && randomNumber < 2 / 3) {
+                computerMove = 'Paper';
+            }
+            else if (randomNumber >= 2 / 3 && randomNumber < 1) {
+                computerMove = 'Scissors';
+            }
+
+            return computerMove;
+
+        }
+
+        let isAutoPlaying = false;
+        let intervalId;
+        function autoplay() {
+            if (!isAutoPlaying) {
+                intervalId = setInterval(function () {
+                    const playerMove = pickComputerMove();
+                    playGame(playerMove);
+                }, 1000);
+                isAutoPlaying = true;
+
+            } else {
+                clearInterval(intervalId);
+                isAutoPlaying = false;
+            }
+
+        }
+
+        function playGame(playerMove) {
+            const computerMove = pickComputerMove();
+            let result = '';
+            if (playerMove === 'scissors') {
+                if (computerMove === 'Rock') {
+                    result = 'You lose';
+                } else if (computerMove === 'Paper') {
+                    result = 'You win';
+                } else if (computerMove === 'Scissors') {
+                    result = 'Tie';
+                }
+            } else if (playerMove === 'paper') {
+                if (computerMove === 'Rock') {
+                    result = 'You win';
+                } else if (computerMove === 'Paper') {
+                    result = 'Tie';
+                } else if (computerMove === 'Scissors') {
+                    result = 'You lose';
+                }
+            } else if (playerMove === 'rock') {
+                if (computerMove === 'Rock') {
+                    result = 'Tie';
+                } else if (computerMove === 'Paper') {
+                    result = 'You lose';
+                } else if (computerMove === 'Scissors') {
+                    result = 'You win';
+                }
+            }
+
+            if (result === 'You win') {
+                score.wins++;
+
+            } else if (result === 'You lose') {
+                score.losses++;
+            } else if (result === 'Tie') {
+                score.ties++;
+            }
+
+
+            localStorage.setItem('score', JSON.stringify(score));
+
+
+
+
+            document.querySelector('.result').innerHTML = `You picked ${playerMove}. Computer picked ${computerMove}.  ${result}.`;
+            updateScore()
+        }
+
+        function updateScore() {
+
+            document.querySelector('.score').innerHTML = ` Wins: ${score.wins} ,  Losses: ${score.losses} ,  Ties:${score.ties}`;
+        }
+
+    </script>
+</body>
+
+</html>
